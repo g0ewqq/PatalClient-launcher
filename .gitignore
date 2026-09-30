@@ -1,0 +1,11 @@
+bin/
+obj/
+out/
+build/
+.vs/
+.vscode/
+.idea/
+.freebuff/
+*.user
+*.suo
+*.log

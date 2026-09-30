@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <RootNamespace>PatalClient.Launcher</RootNamespace>
+    <AssemblyName>PatalClient.Launcher</AssemblyName>
+    <Version>0.1.0</Version>
+    <Company>PatalClient</Company>
+    <Authors>zqxhyt</Authors>
+    <Product>PatalClient</Product>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Fonts\*.otf" />
+  </ItemGroup>
+
+</Project>
