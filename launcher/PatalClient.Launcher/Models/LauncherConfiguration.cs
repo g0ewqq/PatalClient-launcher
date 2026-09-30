@@ -11,6 +11,7 @@ public sealed class LauncherConfiguration
     public string SelectedVersionId { get; set; } = VersionRegistry.Default.VersionId;
     public bool RememberWindowSize { get; set; }
     public bool CheckForUpdatesOnStart { get; set; }
+    public bool ReducedMotion { get; set; }
 
     private static string GetConfigPath()
     {

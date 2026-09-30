@@ -12,11 +12,13 @@ public partial class SettingsWindow : Window
     {
         InitializeComponent();
         _config = config;
+        UI.Motion.FadeScale(this, 0.985, UI.Motion.Entrance);
         ShowCategory("General");
     }
 
     private void CategoryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (!IsLoaded) return;
         if (CategoryList.SelectedItem is ListBoxItem item)
             ShowCategory(item.Content.ToString()!);
     }
@@ -40,6 +42,11 @@ public partial class SettingsWindow : Window
             "Remember window preferences",
             _config.RememberWindowSize,
             value => { _config.RememberWindowSize = value; _config.Save(); }));
+
+        panel.Children.Add(MakeToggle(
+            "Reduce motion",
+            _config.ReducedMotion,
+            value => { _config.ReducedMotion = value; UI.Motion.ReducedMotion = value; _config.Save(); }));
 
         return panel;
     }

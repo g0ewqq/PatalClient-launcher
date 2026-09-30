@@ -20,6 +20,7 @@ public partial class App : Application
             Logger.Error("Fatal unhandled exception", args.ExceptionObject as Exception);
 
         var config = LauncherConfiguration.Load();
+        UI.Motion.ReducedMotion = config.ReducedMotion;
         Logger.Info($"PatalClient launcher started ({LauncherConfiguration.LauncherVersion})");
 
         var window = new MainWindow(config);

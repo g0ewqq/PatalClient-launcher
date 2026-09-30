@@ -7,66 +7,59 @@ namespace PatalClient.Launcher.UI;
 
 public static class PatalLogo
 {
-    private static readonly Color Accent = Color.FromRgb(0x8A, 0x99, 0xAC);
-    private static readonly Color Bar = Color.FromRgb(0xE9, 0xEB, 0xED);
+    private static readonly Color InkColor = Color.FromRgb(0xD5, 0xD8, 0xDC);
 
-    public static FrameworkElement CreateMark(double size = 14)
+    private static Path Monogram(double size, double stroke, Color color)
     {
-        var grid = new Grid { Width = size, Height = size };
+        var bcx = size * 0.545;
+        var bcy = size * 0.355;
+        var r = size * 0.265;
+        var stemX = bcx - r;
+        var stemBottom = size * 0.91;
 
-        var shield = new Path
+        var geometry = new StreamGeometry();
+        using (var ctx = geometry.Open())
         {
-            Data = Geometry.Parse($"M {size / 2} 1 L {size - 1} {size * 0.20} L {size - 1} {size * 0.55} C {size - 1} {size * 0.78} {size * 0.78} {size - 1} {size / 2} {size - 1} C {size * 0.22} {size - 1} 1 {size * 0.78} 1 {size * 0.55} L 1 {size * 0.20} Z"),
-            Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0)),
-            Stroke = new SolidColorBrush(Accent),
-            StrokeThickness = Math.Max(1, size * 0.075)
-        };
-        grid.Children.Add(shield);
+            ctx.BeginFigure(new Point(bcx, bcy - r), false, false);
+            ctx.ArcTo(new Point(bcx, bcy + r), new Size(r, r), 0, true,
+                SweepDirection.Clockwise, true, false);
+            ctx.ArcTo(new Point(bcx, bcy - r), new Size(r, r), 0, true,
+                SweepDirection.Clockwise, true, false);
 
-        var bar = new Rectangle
+            ctx.BeginFigure(new Point(stemX, bcy), false, false);
+            ctx.LineTo(new Point(stemX, stemBottom), true, false);
+        }
+
+        return new Path
         {
-            Width = size * 0.10,
-            Height = size * 0.34,
-            RadiusX = size * 0.05,
-            RadiusY = size * 0.05,
-            Fill = new SolidColorBrush(Bar),
-            Margin = new Thickness(0, 0, 0, size * 0.10),
-            VerticalAlignment = VerticalAlignment.Center,
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-        grid.Children.Add(bar);
-
-        return grid;
-    }
-
-    public static FrameworkElement CreateHero(double size = 62)
-    {
-        var grid = new Grid { Width = size, Height = size };
-
-        var shield = new Path
-        {
-            Data = Geometry.Parse($"M {size / 2} {size * 0.02} L {size * 0.97} {size * 0.22} L {size * 0.97} {size * 0.55} C {size * 0.97} {size * 0.80} {size * 0.76} {size * 0.97} {size / 2} {size * 0.97} C {size * 0.24} {size * 0.97} {size * 0.03} {size * 0.80} {size * 0.03} {size * 0.55} L {size * 0.03} {size * 0.22} Z"),
-            Fill = new SolidColorBrush(Color.FromArgb(0x0A, 0xE9, 0xEB, 0xED)),
-            Stroke = new SolidColorBrush(Accent),
-            StrokeThickness = Math.Max(1.5, size * 0.045),
+            Data = geometry,
+            Stroke = new SolidColorBrush(color),
+            StrokeThickness = stroke,
             StrokeStartLineCap = PenLineCap.Round,
             StrokeEndLineCap = PenLineCap.Round,
-            StrokeLineJoin = PenLineJoin.Round
+            Stretch = Stretch.None
         };
-        grid.Children.Add(shield);
+    }
 
-        var bar = new Rectangle
+    public static FrameworkElement CreateMark(double size = 15)
+    {
+        return Monogram(size, Math.Max(1.4, size * 0.11), InkColor);
+    }
+
+    public static FrameworkElement CreateHero(double size = 76)
+    {
+        var grid = new Grid { Width = size, Height = size };
+        grid.Children.Add(Monogram(size, Math.Max(2, size * 0.075), InkColor));
+
+        grid.Children.Add(new Ellipse
         {
-            Width = size * 0.085,
-            Height = size * 0.34,
-            RadiusX = size * 0.0425,
-            RadiusY = size * 0.0425,
-            Fill = new SolidColorBrush(Bar),
-            Margin = new Thickness(0, 0, 0, size * 0.10),
+            Width = size * 0.11,
+            Height = size * 0.11,
+            Fill = new SolidColorBrush(Color.FromRgb(0x53, 0x78, 0xB0)),
+            HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-        grid.Children.Add(bar);
+            Margin = new Thickness(size * 0.09, 0, 0, 0)
+        });
 
         return grid;
     }

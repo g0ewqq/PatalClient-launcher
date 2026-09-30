@@ -1,21 +1,23 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:ui="clr-namespace:PatalClient.Launcher.UI">
 
-    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF111214" />
-    <SolidColorBrush x:Key="HeaderBrush" Color="#FF17191C" />
-    <SolidColorBrush x:Key="SurfaceBrush" Color="#FF1B1E21" />
-    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#FF22262A" />
-    <SolidColorBrush x:Key="SurfacePressedBrush" Color="#FF2A2F34" />
-    <SolidColorBrush x:Key="BorderBrush" Color="#FF2B2F33" />
-    <SolidColorBrush x:Key="BorderSoftBrush" Color="#FF22262A" />
-    <SolidColorBrush x:Key="TextBrush" Color="#FFE9EBED" />
-    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FFA7ADB3" />
-    <SolidColorBrush x:Key="TextDimBrush" Color="#FF767D84" />
-    <SolidColorBrush x:Key="AccentBrush" Color="#FF4A6FA5" />
-    <SolidColorBrush x:Key="AccentHoverBrush" Color="#FF577FB9" />
-    <SolidColorBrush x:Key="AccentPressedBrush" Color="#FF3F6191" />
-    <SolidColorBrush x:Key="AccentSubtleBrush" Color="#224A6FA5" />
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF0A0A0B" />
+    <SolidColorBrush x:Key="HeaderBrush" Color="#FF0E0E10" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FF101012" />
+    <SolidColorBrush x:Key="ElevatedBrush" Color="#FF141416" />
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#FF191A1C" />
+    <SolidColorBrush x:Key="SurfacePressedBrush" Color="#FF1F2022" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#FF1D1D20" />
+    <SolidColorBrush x:Key="BorderSoftBrush" Color="#FF161618" />
+    <SolidColorBrush x:Key="TextBrush" Color="#FFF2F2F2" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FF909096" />
+    <SolidColorBrush x:Key="TextDimBrush" Color="#FF606066" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#FF44679E" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#FF5378B0" />
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="#FF3A5A8C" />
+    <SolidColorBrush x:Key="AccentSubtleBrush" Color="#1F44679E" />
     <SolidColorBrush x:Key="ErrorBrush" Color="#FFC46A5A" />
     <SolidColorBrush x:Key="SuccessBrush" Color="#FF7FA57F" />
 
@@ -30,6 +32,7 @@
     <sys:Double x:Key="FontSizeDisplay">28</sys:Double>
 
     <Duration x:Key="FastDuration">0:0:0.12</Duration>
+    <Duration x:Key="MediumDuration">0:0:0.15</Duration>
 
     <Style x:Key="BaseTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}" />
@@ -38,7 +41,6 @@
         <Setter Property="FontWeight" Value="Regular" />
         <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
-        <Setter Property="TextOptions.TextHintingMode" Value="Animated" />
     </Style>
 
     <Style x:Key="DisplayTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextStyle}">
@@ -97,7 +99,7 @@
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="HoverLayer"
                                                          Storyboard.TargetProperty="Opacity"
-                                                         To="0.08" Duration="0:0:0.12" />
+                                                         To="0.07" Duration="{StaticResource FastDuration}" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
@@ -106,13 +108,13 @@
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="HoverLayer"
                                                          Storyboard.TargetProperty="Opacity"
-                                                         To="0" Duration="0:0:0.12" />
+                                                         To="0" Duration="{StaticResource FastDuration}" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="HoverLayer" Property="Opacity" Value="0.14" />
+                            <Setter TargetName="HoverLayer" Property="Opacity" Value="0.13" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -134,19 +136,22 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid>
+                    <Grid x:Name="ScaleHost" RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </Grid.RenderTransform>
                         <Border x:Name="Root"
                                 Background="{StaticResource AccentBrush}"
-                                BorderBrush="#FF5D80B3"
+                                BorderBrush="#FF51749F"
                                 BorderThickness="1"
-                                CornerRadius="5" />
+                                CornerRadius="6" />
                         <Border x:Name="HoverLayer"
                                 Background="{StaticResource AccentHoverBrush}"
-                                CornerRadius="5"
+                                CornerRadius="6"
                                 Opacity="0" />
                         <Border x:Name="PressedLayer"
                                 Background="{StaticResource AccentPressedBrush}"
-                                CornerRadius="5"
+                                CornerRadius="6"
                                 Opacity="0" />
                         <ContentPresenter Margin="46,13"
                                           HorizontalAlignment="Center"
@@ -176,6 +181,30 @@
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="PressedLayer" Property="Opacity" Value="1" />
                             <Setter TargetName="HoverLayer" Property="Opacity" Value="0" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleHost"
+                                                         Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                         To="0.985" Duration="{StaticResource FastDuration}" />
+                                        <DoubleAnimation Storyboard.TargetName="ScaleHost"
+                                                         Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                         To="0.985" Duration="{StaticResource FastDuration}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleHost"
+                                                         Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                         To="1" Duration="{StaticResource FastDuration}" />
+                                        <DoubleAnimation Storyboard.TargetName="ScaleHost"
+                                                         Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                         To="1" Duration="{StaticResource FastDuration}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Root" Property="Background" Value="{StaticResource SurfaceBrush}" />
@@ -202,10 +231,10 @@
                                 Background="Transparent"
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1"
-                                CornerRadius="5" />
+                                CornerRadius="6" />
                         <Border x:Name="HoverLayer"
                                 Background="{StaticResource SurfaceHoverBrush}"
-                                CornerRadius="5"
+                                CornerRadius="6"
                                 Opacity="0" />
                         <ContentPresenter Margin="24,10"
                                           HorizontalAlignment="Center"
@@ -246,11 +275,12 @@
         </Setter>
     </Style>
 
-    <Style x:Key="VersionComboBoxStyle" TargetType="ComboBox">
+    <Style x:Key="HeaderComboBoxStyle" TargetType="ComboBox">
         <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}" />
-        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
-        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSecondary}" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
@@ -261,70 +291,73 @@
                                       IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
-                                    <Border x:Name="Root"
-                                            Background="{StaticResource SurfaceBrush}"
-                                            BorderBrush="{StaticResource BorderBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="5">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <ContentPresenter Grid.Column="0" Margin="14,9,4,9" />
-                                            <Path Grid.Column="1"
-                                                  x:Name="Chevron"
-                                                  Data="M 0 0 L 4 4 L 8 0"
-                                                  Margin="0,0,13,0"
-                                                  Stroke="{StaticResource TextDimBrush}"
-                                                  StrokeThickness="1.5"
-                                                  VerticalAlignment="Center"
-                                                  RenderTransformOrigin="0.5,0.5">
-                                                <Path.RenderTransform>
-                                                    <RotateTransform Angle="0" />
-                                                </Path.RenderTransform>
-                                            </Path>
-                                        </Grid>
-                                    </Border>
+                                    <Grid>
+                                        <Border x:Name="HoverLayer"
+                                                Background="{StaticResource SurfaceHoverBrush}"
+                                                CornerRadius="5"
+                                                Opacity="0" />
+                                        <ContentPresenter />
+                                    </Grid>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Root" Property="Background" Value="{StaticResource SurfaceHoverBrush}" />
-                                            <Setter TargetName="Root" Property="BorderBrush" Value="#FF383D43" />
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="HoverLayer"
+                                                                         Storyboard.TargetProperty="Opacity"
+                                                                         To="1" Duration="{StaticResource FastDuration}" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                            <Trigger.ExitActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="HoverLayer"
+                                                                         Storyboard.TargetProperty="Opacity"
+                                                                         To="0" Duration="{StaticResource FastDuration}" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.ExitActions>
                                         </Trigger>
                                         <Trigger Property="IsChecked" Value="True">
-                                            <Setter TargetName="Root" Property="BorderBrush" Value="#FF44545F" />
-                                            <Setter TargetName="Chevron" Property="RenderTransform">
-                                                <Setter.Value>
-                                                    <RotateTransform Angle="180" />
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Setter TargetName="Chevron" Property="Stroke" Value="{StaticResource TextSecondaryBrush}" />
+                                            <Setter TargetName="HoverLayer" Property="Opacity" Value="1" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </ToggleButton.Template>
                         </ToggleButton>
-                        <ContentPresenter IsHitTestVisible="False"
-                                          Margin="14,9,32,9"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Center"
-                                          Content="{TemplateBinding SelectionBoxItem}"
-                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                          ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" />
+                        <Grid IsHitTestVisible="False">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter Grid.Column="0"
+                                              Margin="11,6,4,6"
+                                              VerticalAlignment="Center"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" />
+                            <Path Grid.Column="1"
+                                  Data="M 0 0 L 4 4 L 8 0"
+                                  Margin="0,0,11,0"
+                                  Stroke="{StaticResource TextDimBrush}"
+                                  StrokeThickness="1.5"
+                                  VerticalAlignment="Center" />
+                        </Grid>
                         <Popup x:Name="PART_Popup"
                                IsOpen="{TemplateBinding IsDropDownOpen}"
                                AllowsTransparency="True"
                                Placement="Bottom"
-                               VerticalOffset="4"
+                               VerticalOffset="6"
                                StaysOpen="False"
                                PopupAnimation="Fade">
-                            <Border Background="{StaticResource HeaderBrush}"
+                            <Border Background="{StaticResource ElevatedBrush}"
                                     BorderBrush="{StaticResource BorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="6"
                                     Margin="0,0,0,8"
                                     Padding="4"
-                                    MinWidth="{TemplateBinding ActualWidth}"
+                                    MinWidth="190"
                                     MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                                     <ItemsPresenter />
@@ -344,7 +377,7 @@
             <Setter.Value>
                 <Style TargetType="ComboBoxItem">
                     <Setter Property="FontFamily" Value="{StaticResource PrimaryFontFamily}" />
-                    <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+                    <Setter Property="FontSize" Value="{StaticResource FontSizeSecondary}" />
                     <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
                     <Setter Property="Padding" Value="10,8" />
                     <Setter Property="Cursor" Value="Hand" />

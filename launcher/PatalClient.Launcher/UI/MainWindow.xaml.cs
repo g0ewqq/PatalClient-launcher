@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using PatalClient.Launcher.Models;
 using PatalClient.Launcher.Services;
 using PatalClient.Launcher.Versions;
@@ -23,22 +23,83 @@ public partial class MainWindow : Window
         _integration = new NativeClientIntegration();
 
         Resources["LogoMark"] = UI.PatalLogo.CreateMark(15);
-        LogoHost.Content = UI.PatalLogo.CreateHero(62);
+        LogoMarkHost.Content = Resources["LogoMark"];
+        LogoHost.Content = UI.PatalLogo.CreateHero(76);
         VersionSelector.ItemsSource = VersionRegistry.Versions;
         VersionSelector.SelectedItem = VersionRegistry.Find(config.SelectedVersionId) ?? VersionRegistry.Default;
 
         RefreshPrimaryButton();
         UpdateStatus(null);
+        Loaded += OnLoaded;
     }
 
-    private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        if (e.ClickCount == 2 || e.ButtonState != MouseButtonState.Pressed) return;
-        if (e.OriginalSource is DependencyObject source &&
-            source is System.Windows.Controls.TextBlock or System.Windows.Shapes.Shape)
+        if (UI.Motion.ReducedMotion)
+            return;
+
+        HeroHost.Opacity = 0;
+        ControlsHost.Opacity = 0;
+        FooterHost.Opacity = 0;
+
+        UI.Motion.FadeScale((FrameworkElement)LogoHost.Content, 0.94, UI.Motion.Entrance);
+        RunEntrance(HeroHost, TimeSpan.FromMilliseconds(90), 6);
+        RunEntrance(ControlsHost, TimeSpan.FromMilliseconds(170), 5);
+        RunEntrance(FooterHost, TimeSpan.FromMilliseconds(240), 0);
+        BeginAmbient();
+    }
+
+    private void RunEntrance(FrameworkElement element, TimeSpan delay, double slideFrom)
+    {
+        var storyboard = new Storyboard { BeginTime = delay };
+
+        var fade = new DoubleAnimation(0, 1, UI.Motion.Entrance) { EasingFunction = UI.Motion.EaseOut };
+        Storyboard.SetTarget(fade, element);
+        Storyboard.SetTargetProperty(fade, new PropertyPath("Opacity"));
+        storyboard.Children.Add(fade);
+
+        if (slideFrom != 0)
         {
-            DragMove();
+            var translate = new TranslateTransform(slideFrom, 0);
+            element.RenderTransform = translate;
+            var slide = new DoubleAnimation(slideFrom, 0, UI.Motion.Entrance) { EasingFunction = UI.Motion.EaseOut };
+            Storyboard.SetTarget(slide, element);
+            Storyboard.SetTargetProperty(slide, new PropertyPath("RenderTransform.Y"));
+            storyboard.Children.Add(slide);
         }
+
+        storyboard.Begin(this);
+    }
+
+    private void BeginAmbient()
+    {
+        var storyboard = new Storyboard { RepeatBehavior = RepeatBehavior.Forever, AutoReverse = true };
+        var drift = new DoubleAnimation(0.55, 1, TimeSpan.FromSeconds(16))
+        {
+            EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut }
+        };
+        Storyboard.SetTarget(drift, AmbientGlow);
+        Storyboard.SetTargetProperty(drift, new PropertyPath("(UIElement.Opacity)"));
+        storyboard.Children.Add(drift);
+        storyboard.Begin(AmbientGlow, true);
+    }
+
+    protected override void OnStateChanged(EventArgs e)
+    {
+        base.OnStateChanged(e);
+        if (UI.Motion.ReducedMotion || AmbientGlow == null)
+            return;
+
+        if (WindowState == WindowState.Minimized)
+            AmbientGlow.BeginAnimation(OpacityProperty, null);
+        else
+            BeginAmbient();
+    }
+
+    private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (e.ClickCount == 2 || e.ButtonState != System.Windows.Input.MouseButtonState.Pressed) return;
+        DragMove();
     }
 
     private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -46,8 +107,6 @@ public partial class MainWindow : Window
         var settings = new SettingsWindow(_config) { Owner = this };
         settings.ShowDialog();
     }
-
-    private void MinimizeButton_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
     private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
 
@@ -137,18 +196,17 @@ public partial class MainWindow : Window
         StatusText.SetResourceReference(TextBlock.ForegroundProperty,
             isError ? "ErrorBrush" : "TextDimBrush");
 
-        FooterVersionText.Text = SelectedVersion.VersionId;
         FooterStatusText.Text = _state switch
         {
-            LauncherState.Ready => "R E A D Y",
-            LauncherState.Injecting => "I N J E C T I N G",
-            LauncherState.Active => "A C T I V E",
-            LauncherState.Ejecting => "E J E C T I N G",
-            _ => "O F F L I N E"
+            LauncherState.Ready => "READY",
+            LauncherState.Injecting => "PREPARING",
+            LauncherState.Active => "ACTIVE",
+            LauncherState.Ejecting => "EJECTING",
+            _ => "OFFLINE"
         };
 
         FooterStatusText.SetResourceReference(TextBlock.ForegroundProperty,
-            isError ? "ErrorBrush" : "TextBrush");
+            isError ? "ErrorBrush" : "TextSecondaryBrush");
 
         StatusDot.Fill = (Brush)FindResource(isError ? "ErrorBrush" : _state switch
         {
@@ -156,6 +214,14 @@ public partial class MainWindow : Window
             LauncherState.Ready => "AccentBrush",
             _ => "TextDimBrush"
         });
+
+        if (!UI.Motion.ReducedMotion)
+        {
+            var fade = new DoubleAnimation(0.35, 1, UI.Motion.Fast);
+            StatusDot.BeginAnimation(OpacityProperty, fade);
+        }
+
+        FooterVersionText.Text = SelectedVersion.VersionId;
     }
 
     private static string DescribeFailure(IntegrationResult result) => result.Failure switch
